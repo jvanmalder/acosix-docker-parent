@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.acosix.docker</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <url>https://github.com/Acosix/docker-parent</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:Acosix/docker-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:Acosix/docker-parent.git</developerConnection>
+        <url>git@github.com:Acosix/docker-parent.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>AFaust</id>
+            <name>Axel Faust</name>
+            <email>axel.faust@acosix.de</email>
+            <organization>Acosix GmbH</organization>
+            <roles>
+                <role>Founder</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <properties>
+                <twitter>twitter.com/ReluctantBird83</twitter>
+            </properties>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.dependency.version>3.1.1</maven.dependency.version>
+        <maven.resources.version>3.1.0</maven.resources.version>
+        <maven.war.version>3.2.2</maven.war.version>
+        <maven.antrun.version>1.8</maven.antrun.version>
+        <maven.build-helper.version>3.0.0</maven.build-helper.version>
+        <spotify.dockerfile.version>1.4.4</spotify.dockerfile.version>
+        <fabric8io.docker.version>0.26.1</fabric8io.docker.version>
+
+        <docker.registry.id></docker.registry.id>
+        <docker.registry.push.id>${docker.registry.id}</docker.registry.push.id>
+        <docker.registry.pull.id>${docker.registry.id}</docker.registry.pull.id>
+
+        <docker.image.organisation>acosix</docker.image.organisation>
+        <docker.image.name>${project.artifactId}</docker.image.name>
+        <docker.image.id>${docker.image.organisation}/${docker.image.name}</docker.image.id>
+
+        <docker.from.name></docker.from.name>
+        <docker.from.organisation>${docker.image.organisation}</docker.from.organisation>
+        <docker.from.id>${docker.from.organisation}/${docker.from.name}</docker.from.id>
+        <docker.from.version>${project.version}</docker.from.version>
+
+        <docker.labels.vendor>Acosix GmbH</docker.labels.vendor>
+        <docker.labels.maintainer>info@acosix.org</docker.labels.maintainer>
+        <docker.labels.namespace>de.acosix.docker</docker.labels.namespace>
+
+        <docker.skip>false</docker.skip>
+
+        <docker.skip.build>false</docker.skip.build>
+        <!-- no tag without build -->
+        <docker.skip.tag>${docker.skip.build}</docker.skip.tag>
+        <!-- no push without tag -->
+        <docker.skip.push>${docker.skip.tag}</docker.skip.push>
+
+        <!-- only used by Spotify plugin for Docker -->
+        <docker.registry.host>index.docker.io</docker.registry.host>
+        <docker.retry.count>0</docker.retry.count>
+        <docker.google.enabled>false</docker.google.enabled>
+        <docker.configFile></docker.configFile>
+        <docker.skip.build.latest>${docker.skip.build}</docker.skip.build.latest>
+        <docker.skip.build.version>${docker.skip.build}</docker.skip.build.version>
+        <docker.skip.tag.version>${docker.skip.tag}</docker.skip.tag.version>
+        <docker.skip.tag.latest>${docker.skip.tag}</docker.skip.tag.latest>
+        <docker.skip.push.version>${docker.skip.push}</docker.skip.push.version>
+        <docker.skip.push.latest>${docker.skip.push}</docker.skip.push.latest>
+
+        <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven.dependency.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven.war.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${maven.build-helper.version}</version>
+                    <executions>
+                        <execution>
+                            <id>parse-project-version</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>parse-version</goal>
+                            </goals>
+                            <configuration>
+                                <propertyPrefix>project.version</propertyPrefix>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>generate-docker-release-date</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>timestamp-property</goal>
+                            </goals>
+                            <configuration>
+                                <name>docker.labels.release-date</name>
+                                <pattern>yyyy-MM-dd</pattern>
+                                <timeZone>UTC</timeZone>
+                                <locale>en</locale>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>parse-image-from-version</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>parse-version</goal>
+                            </goals>
+                            <configuration>
+                                <propertyPrefix>docker.from.version</propertyPrefix>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resources.version}</version>
+                    <configuration>
+                        <escapeString>\</escapeString>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven.antrun.version}</version>
+                    <executions>
+                        <execution>
+                            <id>fix-docker-resources-eol</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <tasks>
+                                    <fixcrlf srcDir="${project.build.directory}/ImageBuild" eol="unix"
+                                        encoding="${project.build.sourceEncoding}" />
+                                </tasks>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Option 1: Use Spotify plugin -->
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>${spotify.dockerfile.version}</version>
+                    <executions>
+                        <execution>
+                            <id>build-image</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                            <configuration>
+                                <contextDirectory>${project.build.directory}/ImageBuild</contextDirectory>
+                                <tag>${project.version}</tag>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>tag-image-latest</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>tag</goal>
+                            </goals>
+                            <configuration>
+                                <skipDocker>${docker.skip.tag.latest}</skipDocker>
+                                <tag>latest</tag>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>push-latest-image</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <skipDocker>${docker.skip.push.latest}</skipDocker>
+                                <tag>latest</tag>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <serverId>${docker.registry.id}</serverId>
+                        <registryUrl>https://${docker.registry.host}/v1/</registryUrl>
+                        <repository>${docker.image.id}</repository>
+                        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                        <retryCount>${docker.retry.count}</retryCount>
+                        <googleContainerRegistryEnabled>${docker.google.enabled}</googleContainerRegistryEnabled>
+                        <skip>${docker.skip}</skip>
+                    </configuration>
+                </plugin>
+
+                <!-- Option 2: Use fabric8io plugin -->
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${fabric8io.docker.version}</version>
+                    <executions>
+                        <execution>
+                            <id>build-image</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>push-image</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <images>
+                            <image>
+                                <name>${docker.image.id}</name>
+                                <build>
+                                    <dockerFileDir>${project.build.directory}/ImageBuild</dockerFileDir>
+                                    <tags>
+                                        <tag>latest</tag>
+                                        <tag>${project.version}</tag>
+                                    </tags>
+                                </build>
+                            </image>
+                        </images>
+                        <skip>${docker.skip}</skip>
+                        <skipBuild>${docker.skip.build}</skipBuild>
+                        <skipTag>${docker.skip.tag}</skipTag>
+                        <skipPush>${docker.skip.push}</skipPush>
+                        <pullRegistry>${docker.registry.pull.id}</pullRegistry>
+                        <pushRegistry>${docker.registry.push.id}</pushRegistry>
+                        <verbose>true</verbose>
+                        <imagePullPolicy>IfNotPresent</imagePullPolicy>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.7</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <useAgent>false</useAgent>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
