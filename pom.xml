@@ -294,7 +294,6 @@
                         <skipPush>${docker.skip.push}</skipPush>
                         <pullRegistry>${docker.registry.pull.id}</pullRegistry>
                         <pushRegistry>${docker.registry.push.id}</pushRegistry>
-                        <verbose>true</verbose>
                         <imagePullPolicy>IfNotPresent</imagePullPolicy>
                     </configuration>
                 </plugin>
